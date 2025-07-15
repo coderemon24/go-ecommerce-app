@@ -16,5 +16,4 @@ func main() {
 	}
 	
 	api.NewServer(cfg)
-	
 }
