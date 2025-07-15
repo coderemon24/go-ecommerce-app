@@ -1,20 +1,20 @@
 package main
 
 import (
-	"fmt"
+	"log"
 
-	"github.com/gofiber/fiber/v2"
+	"github.com/coderemon24/go-ecommerce-app/config"
+	"github.com/coderemon24/go-ecommerce-app/internal/api"
 )
 
 
-func main(){
-	fmt.Println("Hello World")
+func main() {
+	cfg, err := config.SetupEnv()
 	
-	app := fiber.New();
+	if err != nil {
+		log.Fatal("Error loading .env file ", err)
+	}
 	
-	app.Get("/", func(c *fiber.Ctx) error {
-		return c.SendString("Hello, World!")
-	})
+	api.NewServer(cfg)
 	
-	app.Listen(":3000")
 }
