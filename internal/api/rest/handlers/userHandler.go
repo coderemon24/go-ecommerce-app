@@ -20,6 +20,8 @@ func UserRoutes(rh *rest.HttpHandler) {
 	// public endpoints
 	app.Get("/users", handler.UserList)
 	
+	
+	
 	// private endpoints
 }
 
