@@ -30,4 +30,5 @@ func NewServer(cfg config.AppConfig) {
 //	registering routes via HttpHandler struct using receiver function
 func setupRoutes(rh *rest.HttpHandler) {
 	handlers.UserRoutes(rh)
+	handlers.CatalogRoutes(rh)
 }
