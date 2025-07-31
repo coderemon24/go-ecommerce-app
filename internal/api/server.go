@@ -6,6 +6,7 @@ import (
 	"github.com/coderemon24/go-ecommerce-app/config"
 	"github.com/coderemon24/go-ecommerce-app/internal/api/rest"
 	"github.com/coderemon24/go-ecommerce-app/internal/api/rest/handlers"
+	"github.com/coderemon24/go-ecommerce-app/internal/domain"
 	"github.com/gofiber/fiber/v2"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
@@ -21,6 +22,8 @@ func NewServer(cfg config.AppConfig) {
 	}
 	
 	log.Println("Database connected")
+	
+	db.AutoMigrate(&domain.User{})
 	
 	
 	app := fiber.New();
