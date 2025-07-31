@@ -15,8 +15,11 @@ type UserHandler struct {
 
 func UserRoutes(rh *rest.HttpHandler) {
 	app := rh.App
+	db := rh.DB
 	
-	svc := service.UserService{}
+	svc := service.UserService{
+		DB: db,
+	}
 	
 	// instance of UserHandler Struct
 	handler := UserHandler{

@@ -1,14 +1,27 @@
 package api
 
 import (
+	"log"
+
 	"github.com/coderemon24/go-ecommerce-app/config"
 	"github.com/coderemon24/go-ecommerce-app/internal/api/rest"
 	"github.com/coderemon24/go-ecommerce-app/internal/api/rest/handlers"
 	"github.com/gofiber/fiber/v2"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 func NewServer(cfg config.AppConfig) {
 	server := cfg.Host + ":" + cfg.Port
+	dsn := cfg.DSN
+	
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		panic("failed to connect database")
+	}
+	
+	log.Println("Database connected")
+	
 	
 	app := fiber.New();
 	
@@ -19,6 +32,7 @@ func NewServer(cfg config.AppConfig) {
 	
 	rh := &rest.HttpHandler{
 		App: app,
+		DB:  db,
 	}
 	
 	setupRoutes(rh)

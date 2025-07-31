@@ -5,9 +5,12 @@ import (
 
 	"github.com/coderemon24/go-ecommerce-app/internal/domain"
 	"github.com/coderemon24/go-ecommerce-app/internal/dto"
+	"gorm.io/gorm"
 )
 
-type UserService struct{}
+type UserService struct{
+	DB *gorm.DB
+}
 
 func (s *UserService) FindUserByEmail(email string) (domain.User, error) {
 	
