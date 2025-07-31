@@ -85,7 +85,7 @@ func (h *UserHandler) UserCreate(ctx *fiber.Ctx) error {
 		})
 	}
 	
-	_, err = h.svc.Signup(usr)
+	token, err := h.svc.Signup(usr)
 	
 	if err != nil {
 		return ctx.Status(http.StatusInternalServerError).JSON(&fiber.Map{
@@ -95,6 +95,8 @@ func (h *UserHandler) UserCreate(ctx *fiber.Ctx) error {
 	
 	return ctx.Status(http.StatusOK).JSON(&fiber.Map{
 		"user": usr,
+		"token": token,
+		"message": "user created",
 	})
 }
 // user update
