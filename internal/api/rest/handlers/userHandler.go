@@ -4,18 +4,24 @@ import (
 	"net/http"
 
 	"github.com/coderemon24/go-ecommerce-app/internal/api/rest"
+	"github.com/coderemon24/go-ecommerce-app/internal/dto"
+	"github.com/coderemon24/go-ecommerce-app/internal/service"
 	"github.com/gofiber/fiber/v2"
 )
 
 type UserHandler struct {
-	// service user.Service
+	svc service.UserService
 }
 
 func UserRoutes(rh *rest.HttpHandler) {
 	app := rh.App
 	
+	svc := service.UserService{}
+	
 	// instance of UserHandler Struct
-	handler := UserHandler{}
+	handler := UserHandler{
+		svc: svc,
+	}
 	
 	// public endpoints
 	app.Post("/users/login", handler.UserLogin)
@@ -36,6 +42,7 @@ func UserRoutes(rh *rest.HttpHandler) {
 
 // user list
 func (h *UserHandler) UserList(ctx *fiber.Ctx) error {
+	
 	return ctx.Status(http.StatusOK).JSON(&fiber.Map{
 		"message" : "user list",
 	})
@@ -48,12 +55,24 @@ func (h *UserHandler) UserById(ctx *fiber.Ctx) error{
 }
 // user by email
 func (h *UserHandler) UserByEmail(ctx *fiber.Ctx) error {
+	
+	email := ctx.Params("email")
+	
+	user, err := h.svc.FindUserByEmail(email)
+	if err != nil {
+		return ctx.Status(404).JSON(&fiber.Map{
+			"message": "user not found",
+		})
+	}
+	
 	return ctx.Status(200).JSON(&fiber.Map{
+		"email": user,
 		"message": "user by email",
 	})
 }
 // user create
 func (h *UserHandler) UserCreate(ctx *fiber.Ctx) error {
+	
 	return ctx.Status(http.StatusOK).JSON(&fiber.Map{
 		"message": "user created",
 	})
@@ -78,6 +97,24 @@ func (h *UserHandler) UserLogin(ctx *fiber.Ctx) error {
 }
 // user register
 func (h *UserHandler) UserRegister(ctx *fiber.Ctx) error {
+	
+	user := dto.UserRegister{}
+	err := ctx.BodyParser(&user)
+	
+	if err != nil {
+		return ctx.Status(400).JSON(&fiber.Map{
+			"message": "invalid request",
+		})
+	}
+	
+	_, err = h.svc.Signup(user)
+	
+	if err != nil {
+		return ctx.Status(500).JSON(&fiber.Map{
+			"message": "user registration failed",
+		})
+	}
+	
 	return ctx.Status(200).JSON(&fiber.Map{
 		"message": "user registered",
 	})
