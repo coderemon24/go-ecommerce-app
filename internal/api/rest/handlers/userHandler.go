@@ -5,6 +5,7 @@ import (
 
 	"github.com/coderemon24/go-ecommerce-app/internal/api/rest"
 	"github.com/coderemon24/go-ecommerce-app/internal/dto"
+	"github.com/coderemon24/go-ecommerce-app/internal/repository"
 	"github.com/coderemon24/go-ecommerce-app/internal/service"
 	"github.com/gofiber/fiber/v2"
 )
@@ -15,10 +16,9 @@ type UserHandler struct {
 
 func UserRoutes(rh *rest.HttpHandler) {
 	app := rh.App
-	db := rh.DB
 	
 	svc := service.UserService{
-		DB: db,
+		Repo: repository.NewUserRepository(rh.DB),
 	}
 	
 	// instance of UserHandler Struct
@@ -76,8 +76,25 @@ func (h *UserHandler) UserByEmail(ctx *fiber.Ctx) error {
 // user create
 func (h *UserHandler) UserCreate(ctx *fiber.Ctx) error {
 	
+	usr := dto.UserRegister{}
+	err := ctx.BodyParser(&usr)
+	
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).JSON(&fiber.Map{
+			"message": "invalid request",
+		})
+	}
+	
+	_, err = h.svc.Signup(usr)
+	
+	if err != nil {
+		return ctx.Status(http.StatusInternalServerError).JSON(&fiber.Map{
+			"message": "failed to create user",
+		})
+	}
+	
 	return ctx.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "user created",
+		"user": usr,
 	})
 }
 // user update
