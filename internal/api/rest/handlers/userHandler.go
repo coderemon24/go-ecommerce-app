@@ -46,10 +46,19 @@ func UserRoutes(rh *rest.HttpHandler) {
 // user list
 func (h *UserHandler) UserList(ctx *fiber.Ctx) error {
 	
+	users, err := h.svc.FindUsers()
+	if err != nil {
+		return ctx.Status(404).JSON(&fiber.Map{
+			"message": "user not found",
+		})
+	}
+	
 	return ctx.Status(http.StatusOK).JSON(&fiber.Map{
-		"message" : "user list",
+		"message" : "Getting all users from database.",
+		"users": users,
 	})
 }
+
 // user by id
 func (h *UserHandler) UserById(ctx *fiber.Ctx) error{
 	

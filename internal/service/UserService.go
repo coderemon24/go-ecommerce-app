@@ -53,3 +53,14 @@ func (s *UserService) FindUserById(id uint) (domain.User, error) {
 	
 	return user, nil
 }
+
+//	find users
+func (s *UserService) FindUsers() ([]domain.User, error) {
+	users, err := s.Repo.GetAllUser()
+	
+	if err != nil {
+		return []domain.User{}, err
+	}
+	
+	return users, nil
+}

@@ -11,6 +11,7 @@ type UserRepository interface {
 	FindUserByEmail(email string) (domain.User, error)
 	UserCreate(usr domain.User) (domain.User, error)
 	GetUserById(id uint) (domain.User, error)
+	GetAllUser() ([]domain.User, error)
 }
 
 type userRepository struct {
@@ -69,4 +70,17 @@ func (r *userRepository) GetUserById(id uint) (domain.User, error) {
 	}
 	
 	return user, err
+}
+
+//	get all user
+func (r *userRepository) GetAllUser() ([]domain.User, error) {
+	var users []domain.User
+	
+	err := r.db.Find(&users).Error
+	
+	if err != nil {
+		return []domain.User{}, errors.New("failed to find user")
+	}
+	
+	return users, err
 }
