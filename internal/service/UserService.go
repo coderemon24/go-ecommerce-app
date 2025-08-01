@@ -14,7 +14,13 @@ type UserService struct {
 
 func (s *UserService) FindUserByEmail(email string) (domain.User, error) {
 
-	return domain.User{}, nil
+	user, err :=s.Repo.FindUserByEmail(email)
+	
+	if(err != nil) {
+		return domain.User{}, err
+	}
+	
+	return user, nil
 }
 
 func (s *UserService) Signup(input dto.UserRegister) (string, error) {

@@ -35,6 +35,16 @@ func (r *userRepository) UserCreate(usr domain.User) (domain.User, error) {
 
 func (r *userRepository) FindUserByEmail(email string) (domain.User, error) {
 	var user domain.User
+	
 	err := r.db.Where("email = ?", email).First(&user).Error
+	
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return domain.User{}, errors.New("user not found")
+		}
+		
+		return domain.User{}, errors.New("failed to find user")
+	}
+	
 	return user, err
 }
