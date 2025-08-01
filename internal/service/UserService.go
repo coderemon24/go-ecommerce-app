@@ -12,6 +12,7 @@ type UserService struct {
 	Repo repository.UserRepository
 }
 
+//	find user by email
 func (s *UserService) FindUserByEmail(email string) (domain.User, error) {
 
 	user, err :=s.Repo.FindUserByEmail(email)
@@ -23,6 +24,7 @@ func (s *UserService) FindUserByEmail(email string) (domain.User, error) {
 	return user, nil
 }
 
+//	user signup -> create user
 func (s *UserService) Signup(input dto.UserRegister) (string, error) {
 
 	user, err := s.Repo.UserCreate(domain.User{
@@ -39,4 +41,15 @@ func (s *UserService) Signup(input dto.UserRegister) (string, error) {
 	token := fmt.Sprintf("Bearer- %v,%v,%v", user.ID, user.Name, user.Email)
 
 	return token, nil
+}
+
+//	 find user by id
+func (s *UserService) FindUserById(id uint) (domain.User, error) {
+	user, err := s.Repo.GetUserById(id)
+	
+	if err != nil {
+		return domain.User{}, err
+	}
+	
+	return user, nil
 }

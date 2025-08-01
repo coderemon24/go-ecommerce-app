@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"net/http"
+	"strconv"
 
 	"github.com/coderemon24/go-ecommerce-app/internal/api/rest"
 	"github.com/coderemon24/go-ecommerce-app/internal/dto"
@@ -28,7 +29,6 @@ func UserRoutes(rh *rest.HttpHandler) {
 	
 	// public endpoints
 	app.Post("/users/login", handler.UserLogin)
-	app.Post("/users/register", handler.UserRegister)
 	
 	
 	// private endpoints
@@ -52,10 +52,26 @@ func (h *UserHandler) UserList(ctx *fiber.Ctx) error {
 }
 // user by id
 func (h *UserHandler) UserById(ctx *fiber.Ctx) error{
+	
+	id := ctx.Params("id")
+	idInt, _ := strconv.ParseUint(id, 10, 32)
+	
+	idMain := uint(idInt)
+	
+	user, err := h.svc.FindUserById(idMain)
+	
+	if err != nil {
+		return ctx.Status(404).JSON(&fiber.Map{
+			"message": "user not found",
+		})
+	}
+	
 	return ctx.Status(http.StatusOK).JSON(&fiber.Map{
-		"message": "user by id",
+		"message": "User Found",
+		"user": user,
 	})
 }
+
 // user by email
 func (h *UserHandler) UserByEmail(ctx *fiber.Ctx) error {
 	
@@ -73,6 +89,7 @@ func (h *UserHandler) UserByEmail(ctx *fiber.Ctx) error {
 		"message": "user by email",
 	})
 }
+
 // user create
 func (h *UserHandler) UserCreate(ctx *fiber.Ctx) error {
 	
@@ -99,45 +116,27 @@ func (h *UserHandler) UserCreate(ctx *fiber.Ctx) error {
 		"message": "user created",
 	})
 }
+
+
 // user update
 func(h *UserHandler)UserUpdate(ctx *fiber.Ctx)error{
 	return ctx.Status(200).JSON(&fiber.Map{
 		"message": "user updated",
 	})
 }
+
+
 // user delete
 func(h *UserHandler) UserDelete(ctx *fiber.Ctx) error {
 	return ctx.Status(200).JSON(&fiber.Map{
 		"message" : "user deleted",
 	})
 }
+
+
 // user login
 func (h *UserHandler) UserLogin(ctx *fiber.Ctx) error {
 	return ctx.Status(200).JSON(&fiber.Map{
 		"message": "user logged in",
-	})
-}
-// user register
-func (h *UserHandler) UserRegister(ctx *fiber.Ctx) error {
-	
-	user := dto.UserRegister{}
-	err := ctx.BodyParser(&user)
-	
-	if err != nil {
-		return ctx.Status(400).JSON(&fiber.Map{
-			"message": "invalid request",
-		})
-	}
-	
-	_, err = h.svc.Signup(user)
-	
-	if err != nil {
-		return ctx.Status(500).JSON(&fiber.Map{
-			"message": "user registration failed",
-		})
-	}
-	
-	return ctx.Status(200).JSON(&fiber.Map{
-		"message": "user registered",
 	})
 }
